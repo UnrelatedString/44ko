@@ -3,6 +3,9 @@ package:
   description: A bare-bones manga reader designed to automatically parse panels out from the page and separate / hide them as desired 
   dependencies:
     - prelude: ">=6.0.2 <7.0.0"
+    - effect
+    - halogen
+    - halogen-css
   test:
     main: Test.Main
     dependencies:

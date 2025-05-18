@@ -1,0 +1,43 @@
+{
+  "name": "44ko",
+  "version": "0.1.0",
+  "description": "A bare-bones manga reader designed to automatically parse panels out from the page and separate / hide them as desired",
+  "homepage": "https://github.com/UnrelatedString/44ko#readme",
+  "bugs": {
+    "url": "https://github.com/UnrelatedString/44ko/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UnrelatedString/44ko.git"
+  },
+  "license": "AGPL-3.0-or-later",
+  "author": "UnrelatedString",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "spago install",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "build": "spago build && rollup -c rollup.config.ts --configPlugin typescript",
+    "serve": "spago build && rollup -c rollup.config.ts --configPlugin typescript --configServe",
+    "test": "spago test"
+  },
+  "dependencies": {
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/node": "^22.13.10",
+    "@types/webpack": "^5.28.5",
+    "copy-webpack-plugin": "^13.0.0",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.35.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-html": "^2.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup-plugin-dev": "^1.1.3"
+  }
+}
