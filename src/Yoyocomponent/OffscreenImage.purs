@@ -35,36 +35,33 @@ offscreenImage = H.mkComponent
     { handleAction = handleAction
     }
   }
+  where
 
-refLabel :: H.RefLabel
-refLabel = H.RefLabel "oiRefLabel"
+  refLabel :: H.RefLabel
+  refLabel = H.RefLabel "oiRefLabel"
 
-render
-  :: forall m
-  . MonadEffect m
-  => State
-  -> H.ComponentHTML Action () m
-render { url } = HTML.img
-  [ style $ CSS.display CSS.displayNone
-  , Prop.src url
-  , Events.onLoad (const HasDimensions)
-  , Prop.ref refLabel
-  ]
+  render
+    :: State
+    -> H.ComponentHTML Action () m
+  render { url } = HTML.img
+    [ style $ CSS.display CSS.displayNone
+    , Prop.src url
+    , Events.onLoad (const HasDimensions)
+    , Prop.ref refLabel
+    ]
 
-handleAction
-  :: forall m
-  . MonadEffect m
-  => Action
-  -> H.HalogenM State Action () Output m Unit
-handleAction HasDimensions = do
-  maybeElem <- H.getHTMLElementRef refLabel
-  for_ maybeElem \elem -> H.raise =<< H.liftEffect do
-    let img = toImageElement elem
-    width <- ImageElement.width img
-    height <- ImageElement.height img
-    offscreen <- createOffscreenCanvas { width, height }
-    drawImage offscreen img
-    pure offscreen
+  handleAction
+    :: Action
+    -> H.HalogenM State Action () Output m Unit
+  handleAction HasDimensions = do
+    maybeElem <- H.getHTMLElementRef refLabel
+    for_ maybeElem \elem -> H.raise =<< H.liftEffect do
+      let img = toImageElement elem
+      width <- ImageElement.width img
+      height <- ImageElement.height img
+      offscreen <- createOffscreenCanvas { width, height }
+      drawImage offscreen img
+      pure offscreen
 
 toImageElement :: HTMLElement -> HTMLImageElement
 toImageElement = unsafeCoerce
