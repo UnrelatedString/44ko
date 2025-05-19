@@ -13,11 +13,12 @@ import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML (HTMLElement, HTMLImageElement)
 
 type State =
+  forall r i.
   { url :: String
-  , props :: Array _
+  , props :: Array (Prop.IProp r i)
   }
 
-type Action = Unit
+data Action = EmitDimensions
 
 refLabel :: H.RefLabel
 refLabel = H.RefLabel "oiRefLabel"
@@ -29,8 +30,8 @@ render
 render { url, props } = HTML.img $ props <>
   [ style CSS.displayNone
   , Prop.src url
-  , Events.onLoad (const unit)
-  , 
+  , Events.onLoad (const EmitDimensions)
+  , Prop.ref refLabel
   ]
 
 
