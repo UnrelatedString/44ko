@@ -1,5 +1,5 @@
 export function createOffscreenBitmapImpl(bmp) {
-  let ret = OffscreenCanvas(bmp.width, bmp.height);
+  let ret = new OffscreenCanvas(bmp.width, bmp.height);
   let ctx = ret.getContext("bitmaprenderer");
   ctx.transferFromImageBitmap(bmp);
   return ret;
