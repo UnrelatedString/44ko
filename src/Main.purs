@@ -6,7 +6,7 @@ import Effect (Effect)
 import Halogen.Aff (runHalogenAff, awaitBody)
 import Halogen.VDom.Driver (runUI)
 
-import Component.Root (root)
+import Yoyocomponent.Root (root)
 
 main :: Effect Unit
 main = runHalogenAff do
