@@ -9,6 +9,7 @@
             "aff-promise",
             "css",
             "effect",
+            "foldable-traversable",
             "halogen",
             "halogen-css",
             {

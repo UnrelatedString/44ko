@@ -3,14 +3,15 @@ module Foreign.Jank
   , createOffscreenCanvas
   , drawImage
   , ImageBitmap
+  , crop
   ) where
 
 import Prelude
 
 import Effect (Effect)
+import Effect.Aff (Aff)
 import Effect.Uncurried as E
 import Control.Promise (Promise, toAffE)
-import Web.File.Blob (Blob)
 import Web.HTML (HTMLImageElement)
 
 foreign import data OffscreenCanvas :: Type
@@ -40,3 +41,8 @@ foreign import createImageBitmapImpl
     { x :: Int, y :: Int, width :: Int, height :: Int }
     (Promise ImageBitmap)
 
+crop
+  :: OffscreenCanvas
+  -> { x :: Int, y :: Int, width :: Int, height :: Int }
+  -> Aff ImageBitmap
+crop = (<<<) toAffE <<< E.runEffectFn2 createImageBitmapImpl
