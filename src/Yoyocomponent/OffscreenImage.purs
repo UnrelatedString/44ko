@@ -14,7 +14,7 @@ import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML (HTMLElement, HTMLImageElement)
 import Web.HTML.HTMLImageElement as ImageElement
 
-import Foreign.Jank (OffscreenCanvas, createOffscreenCanvas, drawImage)
+import Foreign.Jank (OffscreenBitmap, createOffscreenCanvas, drawImage)
 
 type State =
   { url :: String
@@ -22,7 +22,7 @@ type State =
 
 data Action = HasDimensions
 
-type Output = OffscreenCanvas
+type Output = OffscreenBitmap
 
 offscreenImage
   :: forall query m

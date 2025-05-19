@@ -1,9 +1,6 @@
 module Foreign.Jank
-  ( OffscreenCanvas
-  , OffscreenCanvasContextType
-  , offscreen2d
-  , offscreenBitmap
-  , createOffscreenCanvas
+  ( OffscreenBitmap
+  , createOffscreenBitmap
   , drawImage
   , ImageBitmap
   , crop
@@ -17,52 +14,42 @@ import Effect.Uncurried as E
 import Control.Promise (Promise, toAffE)
 import Web.HTML (HTMLImageElement)
 
-foreign import data OffscreenCanvas :: Type
-
-newtype OffscreenCanvasContextType = OffscreenCanvasContextType String
-
-offscreen2d :: OffscreenCanvasContextType
-offscreen2d = OffscreenCanvasContextType "2d"
-
-offscreenBitmap :: OffscreenCanvasContextType
-offscreenBitmap = OffscreenCanvasContextType "bitmaprenderer"
+foreign import data OffscreenBitmap :: Type
 
 foreign import data ImageBitmap :: Type
 
-foreign import createOffscreenCanvasImpl
-  :: E.EffectFn2
+foreign import createOffscreenBitmapImpl
+  :: E.EffectFn1
     { width :: Int, height :: Int }
-    OffscreenCanvasContextType
-    OffscreenCanvas
+    OffscreenBitmap
 
-createOffscreenCanvas
+createOffscreenBitmap
   :: { width :: Int, height :: Int }
-  -> OffscreenCanvasContextType
-  -> Effect OffscreenCanvas
-createOffscreenCanvas = E.runEffectFn1 createOffscreenCanvasImpl
+  -> Effect OffscreenBitmap
+createOffscreenBitmap = E.runEffectFn1 createOffscreenBitmapImpl
 
 foreign import drawImageImpl
   :: E.EffectFn2
-    OffscreenCanvas
+    OffscreenBitmap
     HTMLImageElement
     Unit
 
-drawImage :: OffscreenCanvas -> HTMLImageElement -> Effect Unit
+drawImage :: OffscreenBitmap -> HTMLImageElement -> Effect Unit
 drawImage = E.runEffectFn2 drawImageImpl
 
 foreign import createImageBitmapImpl
   :: E.EffectFn2
-    OffscreenCanvas
+    OffscreenBitmap
     { x :: Int, y :: Int, width :: Int, height :: Int }
     (Promise ImageBitmap)
 
 -- COULD do this with CSS
 -- https://stackoverflow.com/a/26219379
 -- but seems cleaner not to juggle URLs when it's
--- canvas stuff anyways
+-- Bitmap stuff anyways
 
 crop
-  :: OffscreenCanvas
+  :: OffscreenBitmap
   -> { x :: Int, y :: Int, width :: Int, height :: Int }
   -> Aff ImageBitmap
 crop = (<<<) toAffE <<< E.runEffectFn2 createImageBitmapImpl
