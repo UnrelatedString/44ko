@@ -5,6 +5,7 @@ package:
     - prelude: ">=6.0.2 <7.0.0"
     - aff
     - aff-promise
+    - affjax
     - affjax-web
     - css
     - effect
