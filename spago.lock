@@ -7,6 +7,7 @@
           "dependencies": [
             "aff",
             "aff-promise",
+            "affjax-web",
             "css",
             "effect",
             "foldable-traversable",
@@ -22,6 +23,10 @@
           "build_plan": [
             "aff",
             "aff-promise",
+            "affjax",
+            "affjax-web",
+            "argonaut-core",
+            "arraybuffer-types",
             "arrays",
             "avar",
             "bifunctors",
@@ -44,6 +49,7 @@
             "foreign",
             "foreign-object",
             "fork",
+            "form-urlencoded",
             "free",
             "freeap",
             "functions",
@@ -53,11 +59,13 @@
             "halogen-css",
             "halogen-subscriptions",
             "halogen-vdom",
+            "http-methods",
             "identity",
             "integers",
             "invariant",
             "js-date",
             "js-promise",
+            "js-uri",
             "lazy",
             "lcg",
             "lists",
@@ -99,7 +107,8 @@
             "web-pointerevents",
             "web-storage",
             "web-touchevents",
-            "web-uievents"
+            "web-uievents",
+            "web-xhr"
           ]
         },
         "test": {
@@ -774,6 +783,37 @@
         "foreign"
       ]
     },
+    "affjax": {
+      "type": "registry",
+      "version": "13.0.0",
+      "integrity": "sha256-blYfaoW4FYIrIdvmT4sB7nN7BathFaEfZuiVLPmHJOo=",
+      "dependencies": [
+        "aff",
+        "argonaut-core",
+        "arraybuffer-types",
+        "foreign",
+        "form-urlencoded",
+        "http-methods",
+        "integers",
+        "media-types",
+        "nullable",
+        "refs",
+        "unsafe-coerce",
+        "web-xhr"
+      ]
+    },
+    "affjax-web": {
+      "type": "registry",
+      "version": "1.0.0",
+      "integrity": "sha256-n/yJUk1wMxMN7fJ2TJ+fELgieomy29N617yOshAnrc0=",
+      "dependencies": [
+        "aff",
+        "affjax",
+        "either",
+        "maybe",
+        "prelude"
+      ]
+    },
     "ansi": {
       "type": "registry",
       "version": "7.0.0",
@@ -1138,6 +1178,20 @@
         "aff"
       ]
     },
+    "form-urlencoded": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-WUzk8DTjrbPVHKZ5w7XpPBO6ci6xFhvYguHp6RvX+18=",
+      "dependencies": [
+        "foldable-traversable",
+        "js-uri",
+        "maybe",
+        "newtype",
+        "prelude",
+        "strings",
+        "tuples"
+      ]
+    },
     "free": {
       "type": "registry",
       "version": "7.1.0",
@@ -1284,6 +1338,16 @@
         "web-html"
       ]
     },
+    "http-methods": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-Orr7rbDGcp7qoqmUMXPRMjBx+C4jqOQcFe9+gE3nMgU=",
+      "dependencies": [
+        "either",
+        "prelude",
+        "strings"
+      ]
+    },
     "identity": {
       "type": "registry",
       "version": "6.0.0",
@@ -1338,6 +1402,15 @@
         "functions",
         "maybe",
         "prelude"
+      ]
+    },
+    "js-uri": {
+      "type": "registry",
+      "version": "3.1.0",
+      "integrity": "sha256-3p0ynHveCJmC2CXze+eMBdW/2l5e953Q8XMAKz+jxUo=",
+      "dependencies": [
+        "functions",
+        "maybe"
       ]
     },
     "lazy": {
@@ -2127,6 +2200,19 @@
       "version": "5.0.0",
       "integrity": "sha256-5I+ut9JYno3wowti3vJGs1afKCm1ucppKuy+zhuSyss=",
       "dependencies": [
+        "web-html"
+      ]
+    },
+    "web-xhr": {
+      "type": "registry",
+      "version": "5.0.1",
+      "integrity": "sha256-3dbIPVG66S+hPrgEVnpD78hrGjE7qlBbsReWOz89Ios=",
+      "dependencies": [
+        "arraybuffer-types",
+        "datetime",
+        "http-methods",
+        "web-dom",
+        "web-file",
         "web-html"
       ]
     }

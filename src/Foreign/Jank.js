@@ -1,13 +1,10 @@
-export function createOffscreenBitmapImpl(rec) {
-  let ret = OffscreenCanvas(rec.width, rec.height);
+export function createOffscreenBitmapImpl(bmp) {
+  let ret = OffscreenCanvas(bmp.width, bmp.height);
   let ctx = ret.getContext("bitmaprenderer");
-  
+  ctx.transferFromImageBitmap(bmp);
+  return ret;
 }
 
-export function createImageBitmapImpl(source, rec) {
+export function cropImpl(source, rec) {
   return createImageBitmap(source, rec.x, rec.y, rec.width, rec.height);
-}
-
-export function drawImageImpl(canvas, source) {
-  canvas.drawImage(source, 0, 0)
 }

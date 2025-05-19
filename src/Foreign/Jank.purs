@@ -1,7 +1,6 @@
 module Foreign.Jank
   ( OffscreenBitmap
   , createOffscreenBitmap
-  , drawImage
   , ImageBitmap
   , crop
   ) where
@@ -12,32 +11,20 @@ import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Uncurried as E
 import Control.Promise (Promise, toAffE)
-import Web.HTML (HTMLImageElement)
 
 foreign import data OffscreenBitmap :: Type
 
 foreign import data ImageBitmap :: Type
 
-foreign import createOffscreenBitmapImpl
-  :: E.EffectFn1
-    { width :: Int, height :: Int }
-    OffscreenBitmap
+-- I don't think I have to worry about ownership transfer stuff
+-- since I'm not using workers? I hope not :|
 
-createOffscreenBitmap
-  :: { width :: Int, height :: Int }
-  -> Effect OffscreenBitmap
+foreign import createOffscreenBitmapImpl :: E.EffectFn1 ImageBitmap OffscreenBitmap
+
+createOffscreenBitmap :: ImageBitmap -> Effect OffscreenBitmap
 createOffscreenBitmap = E.runEffectFn1 createOffscreenBitmapImpl
 
-foreign import drawImageImpl
-  :: E.EffectFn2
-    OffscreenBitmap
-    HTMLImageElement
-    Unit
-
-drawImage :: OffscreenBitmap -> HTMLImageElement -> Effect Unit
-drawImage = E.runEffectFn2 drawImageImpl
-
-foreign import createImageBitmapImpl
+foreign import cropImpl
   :: E.EffectFn2
     OffscreenBitmap
     { x :: Int, y :: Int, width :: Int, height :: Int }
@@ -52,4 +39,4 @@ crop
   :: OffscreenBitmap
   -> { x :: Int, y :: Int, width :: Int, height :: Int }
   -> Aff ImageBitmap
-crop = (<<<) toAffE <<< E.runEffectFn2 createImageBitmapImpl
+crop = (<<<) toAffE <<< E.runEffectFn2 cropImpl
