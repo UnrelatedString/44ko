@@ -17,14 +17,14 @@ const config = (args: Record<string, any>): RollupOptions => ({
             ],
         }),
         html({
-            title: "bingous",
+            title: "44ko",
             meta: [
                 { charset: 'utf-8' },
                 { property: 'og:type', content: 'website' },
                 { property: 'og:title', content: '44ko' },
                 { property: 'og:description', content: 'A content-aware manga reader' },
-                //{ property: 'og:url', content: 'https://www.bingous.org' },
-                //{ property: 'og:image', content: 'https://www.bingous.org/bingous1.png' },
+                { property: 'og:url', content: 'https://unrelatedstring.github.io/44ko/' },
+                { property: 'og:image', content: 'https://avatars.githubusercontent.com/u/33167175' },
             ],
             attributes: {
                 html: { lang: 'en' },
