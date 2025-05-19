@@ -25,6 +25,9 @@ foreign import data ImageBitmap :: Type
 -- I don't think I have to worry about ownership transfer stuff
 -- since I'm not using workers? I hope not :|
 
+-- ... also I hope Aff fibers can handle the background computation type stuff
+-- well enough without workers LMAO
+
 foreign import createOffscreenBitmapImpl :: E.EffectFn1 ImageBitmap OffscreenBitmap
 
 createOffscreenBitmap :: ImageBitmap -> Effect OffscreenBitmap
