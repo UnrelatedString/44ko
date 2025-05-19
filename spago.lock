@@ -13,7 +13,9 @@
             {
               "prelude": ">=6.0.2 <7.0.0"
             },
-            "web-file"
+            "unsafe-coerce",
+            "web-file",
+            "web-html"
           ],
           "build_plan": [
             "aff",
