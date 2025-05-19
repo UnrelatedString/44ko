@@ -12,6 +12,7 @@ package:
     - foldable-traversable
     - halogen
     - halogen-css
+    - transformers
     - unsafe-coerce
     - web-file
     - web-html

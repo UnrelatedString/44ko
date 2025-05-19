@@ -1,16 +1,22 @@
 module Foreign.Jank
   ( OffscreenBitmap
-  , createOffscreenBitmap
+  , blobToOffscreen
   , ImageBitmap
   , crop
   ) where
 
 import Prelude
 
+import Control.Monad.Error.Class (try)
+import Control.Promise (Promise, toAffE)
+import Data.Either (Either)
+import Data.Traversable (traverse)
 import Effect (Effect)
 import Effect.Aff (Aff)
+import Effect.Class (liftEffect)
+import Effect.Exception (Error)
 import Effect.Uncurried as E
-import Control.Promise (Promise, toAffE)
+import Web.File.Blob (Blob)
 
 foreign import data OffscreenBitmap :: Type
 
@@ -23,6 +29,13 @@ foreign import createOffscreenBitmapImpl :: E.EffectFn1 ImageBitmap OffscreenBit
 
 createOffscreenBitmap :: ImageBitmap -> Effect OffscreenBitmap
 createOffscreenBitmap = E.runEffectFn1 createOffscreenBitmapImpl
+
+foreign import tryCreateImageBitmap :: E.EffectFn1 Blob (Promise ImageBitmap)
+
+blobToOffscreen :: Blob -> Aff (Either Error OffscreenBitmap)
+blobToOffscreen blob = do
+  result <- try $ toAffE $ E.runEffectFn1 tryCreateImageBitmap blob
+  traverse (liftEffect <<< createOffscreenBitmap) result
 
 foreign import cropImpl
   :: E.EffectFn2

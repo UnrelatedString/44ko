@@ -5,6 +5,10 @@ export function createOffscreenBitmapImpl(bmp) {
   return ret;
 }
 
+export function tryCreateImageBitmap(blob) {
+  return createImageBitmap(blob);
+}
+
 export function cropImpl(source, rec) {
   return createImageBitmap(source, rec.x, rec.y, rec.width, rec.height);
 }

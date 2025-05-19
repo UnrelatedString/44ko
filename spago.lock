@@ -7,6 +7,7 @@
           "dependencies": [
             "aff",
             "aff-promise",
+            "affjax",
             "affjax-web",
             "css",
             "effect",
@@ -16,6 +17,7 @@
             {
               "prelude": ">=6.0.2 <7.0.0"
             },
+            "transformers",
             "unsafe-coerce",
             "web-file",
             "web-html"
