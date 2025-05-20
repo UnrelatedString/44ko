@@ -1,8 +1,11 @@
 module Foreign.Jank
   ( OffscreenBitmap
+  , Rect
   , blobToOffscreen
+  , getDimensions
   , ImageBitmap
   , crop
+  , probe
   ) where
 
 import Prelude
@@ -16,12 +19,15 @@ import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Effect.Exception (Error)
 import Effect.Uncurried as E
-import Graphics.Canvas (ImageData)
+import Graphics.Canvas (getCanvasDimensions, ImageData)
+import Unsafe.Coerce (unsafeCoerce)
 import Web.File.Blob (Blob)
 
 foreign import data OffscreenBitmap :: Type
 
 foreign import data ImageBitmap :: Type
+
+type Rect = { x :: Int, y :: Int, width :: Int, height :: Int }
 
 -- I don't think I have to worry about ownership transfer stuff
 -- since I'm not using workers? I hope not :|
@@ -34,6 +40,9 @@ foreign import createOffscreenBitmapImpl :: E.EffectFn1 ImageBitmap OffscreenBit
 createOffscreenBitmap :: ImageBitmap -> Effect OffscreenBitmap
 createOffscreenBitmap = E.runEffectFn1 createOffscreenBitmapImpl
 
+getDimensions :: OffscreenBitmap -> Effect { width :: Int, height :: Int }
+getDimensions = unsafeCoerce getCanvasDimensions -- lmao.
+
 foreign import tryCreateImageBitmap :: E.EffectFn1 Blob (Promise ImageBitmap)
 
 blobToOffscreen :: Blob -> Aff (Either Error OffscreenBitmap)
@@ -44,7 +53,7 @@ blobToOffscreen blob = do
 foreign import cropImpl
   :: E.EffectFn2
     OffscreenBitmap
-    { x :: Int, y :: Int, width :: Int, height :: Int }
+    Rect
     (Promise ImageBitmap)
 
 -- COULD do this with CSS
@@ -57,3 +66,10 @@ crop
   -> { x :: Int, y :: Int, width :: Int, height :: Int }
   -> Aff ImageBitmap
 crop = (<<<) toAffE <<< E.runEffectFn2 cropImpl
+
+-- because the binding in Graphics.Canvas is just kinda icky lol
+-- (and like kinda would need to be unsafeCoerced to OffscreenCanvas anyways)
+foreign import probeImpl :: E.EffectFn2 OffscreenBitmap Rect ImageData
+
+probe :: OffscreenBitmap -> Rect -> Effect ImageData
+probe = E.runEffectFn2 probeImpl
