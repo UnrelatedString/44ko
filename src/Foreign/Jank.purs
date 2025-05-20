@@ -16,6 +16,7 @@ import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Effect.Exception (Error)
 import Effect.Uncurried as E
+import Graphics.Canvas (ImageData)
 import Web.File.Blob (Blob)
 
 foreign import data OffscreenBitmap :: Type
