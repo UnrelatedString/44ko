@@ -7,6 +7,11 @@
           "dependencies": [
             "aff",
             "aff-promise",
+            "affjax",
+            "affjax-web",
+            "arraybuffer",
+            "canvas",
+            "colors",
             "css",
             "effect",
             "foldable-traversable",
@@ -15,6 +20,7 @@
             {
               "prelude": ">=6.0.2 <7.0.0"
             },
+            "transformers",
             "unsafe-coerce",
             "web-file",
             "web-html"
@@ -22,9 +28,15 @@
           "build_plan": [
             "aff",
             "aff-promise",
+            "affjax",
+            "affjax-web",
+            "argonaut-core",
+            "arraybuffer",
+            "arraybuffer-types",
             "arrays",
             "avar",
             "bifunctors",
+            "canvas",
             "catenable-lists",
             "colors",
             "console",
@@ -40,10 +52,12 @@
             "enums",
             "exceptions",
             "exists",
+            "float32",
             "foldable-traversable",
             "foreign",
             "foreign-object",
             "fork",
+            "form-urlencoded",
             "free",
             "freeap",
             "functions",
@@ -53,11 +67,13 @@
             "halogen-css",
             "halogen-subscriptions",
             "halogen-vdom",
+            "http-methods",
             "identity",
             "integers",
             "invariant",
             "js-date",
             "js-promise",
+            "js-uri",
             "lazy",
             "lcg",
             "lists",
@@ -88,6 +104,7 @@
             "tuples",
             "type-equality",
             "typelevel-prelude",
+            "uint",
             "unfoldable",
             "unsafe-coerce",
             "unsafe-reference",
@@ -99,7 +116,8 @@
             "web-pointerevents",
             "web-storage",
             "web-touchevents",
-            "web-uievents"
+            "web-uievents",
+            "web-xhr"
           ]
         },
         "test": {
@@ -774,6 +792,37 @@
         "foreign"
       ]
     },
+    "affjax": {
+      "type": "registry",
+      "version": "13.0.0",
+      "integrity": "sha256-blYfaoW4FYIrIdvmT4sB7nN7BathFaEfZuiVLPmHJOo=",
+      "dependencies": [
+        "aff",
+        "argonaut-core",
+        "arraybuffer-types",
+        "foreign",
+        "form-urlencoded",
+        "http-methods",
+        "integers",
+        "media-types",
+        "nullable",
+        "refs",
+        "unsafe-coerce",
+        "web-xhr"
+      ]
+    },
+    "affjax-web": {
+      "type": "registry",
+      "version": "1.0.0",
+      "integrity": "sha256-n/yJUk1wMxMN7fJ2TJ+fELgieomy29N617yOshAnrc0=",
+      "dependencies": [
+        "aff",
+        "affjax",
+        "either",
+        "maybe",
+        "prelude"
+      ]
+    },
     "ansi": {
       "type": "registry",
       "version": "7.0.0",
@@ -818,6 +867,25 @@
         "prelude",
         "strings",
         "tailrec"
+      ]
+    },
+    "arraybuffer": {
+      "type": "registry",
+      "version": "13.2.0",
+      "integrity": "sha256-fNsR19aRqcUis9C28MpyMigIlfX6f6Hq1up4IcTOvDU=",
+      "dependencies": [
+        "arraybuffer-types",
+        "arrays",
+        "effect",
+        "float32",
+        "functions",
+        "gen",
+        "maybe",
+        "nullable",
+        "prelude",
+        "tailrec",
+        "uint",
+        "unfoldable"
       ]
     },
     "arraybuffer-types": {
@@ -870,6 +938,18 @@
         "newtype",
         "prelude",
         "tuples"
+      ]
+    },
+    "canvas": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-Y4L0bTJu4budLhb24ImGUb3s0qvcgja2lPhRDhHRlys=",
+      "dependencies": [
+        "arraybuffer-types",
+        "effect",
+        "exceptions",
+        "functions",
+        "maybe"
       ]
     },
     "catenable-lists": {
@@ -1077,6 +1157,16 @@
         "ordered-collections"
       ]
     },
+    "float32": {
+      "type": "registry",
+      "version": "2.0.0",
+      "integrity": "sha256-PRRdv0zNZ8JdohWTO3ZSLzt51ymxK4/NHtGTwuMWHtw=",
+      "dependencies": [
+        "gen",
+        "maybe",
+        "prelude"
+      ]
+    },
     "foldable-traversable": {
       "type": "registry",
       "version": "6.0.0",
@@ -1136,6 +1226,20 @@
       "integrity": "sha256-X7u0SuCvFbLbzuNEKLBNuWjmcroqMqit4xEzpQwAP7E=",
       "dependencies": [
         "aff"
+      ]
+    },
+    "form-urlencoded": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-WUzk8DTjrbPVHKZ5w7XpPBO6ci6xFhvYguHp6RvX+18=",
+      "dependencies": [
+        "foldable-traversable",
+        "js-uri",
+        "maybe",
+        "newtype",
+        "prelude",
+        "strings",
+        "tuples"
       ]
     },
     "free": {
@@ -1284,6 +1388,16 @@
         "web-html"
       ]
     },
+    "http-methods": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-Orr7rbDGcp7qoqmUMXPRMjBx+C4jqOQcFe9+gE3nMgU=",
+      "dependencies": [
+        "either",
+        "prelude",
+        "strings"
+      ]
+    },
     "identity": {
       "type": "registry",
       "version": "6.0.0",
@@ -1338,6 +1452,15 @@
         "functions",
         "maybe",
         "prelude"
+      ]
+    },
+    "js-uri": {
+      "type": "registry",
+      "version": "3.1.0",
+      "integrity": "sha256-3p0ynHveCJmC2CXze+eMBdW/2l5e953Q8XMAKz+jxUo=",
+      "dependencies": [
+        "functions",
+        "maybe"
       ]
     },
     "lazy": {
@@ -2018,6 +2141,19 @@
         "type-equality"
       ]
     },
+    "uint": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-fQ30YjiKz9DS6yqRdmK+WARVbJhpZDDTRcpFw675b6M=",
+      "dependencies": [
+        "effect",
+        "enums",
+        "gen",
+        "maybe",
+        "numbers",
+        "prelude"
+      ]
+    },
     "unfoldable": {
       "type": "registry",
       "version": "6.0.0",
@@ -2127,6 +2263,19 @@
       "version": "5.0.0",
       "integrity": "sha256-5I+ut9JYno3wowti3vJGs1afKCm1ucppKuy+zhuSyss=",
       "dependencies": [
+        "web-html"
+      ]
+    },
+    "web-xhr": {
+      "type": "registry",
+      "version": "5.0.1",
+      "integrity": "sha256-3dbIPVG66S+hPrgEVnpD78hrGjE7qlBbsReWOz89Ios=",
+      "dependencies": [
+        "arraybuffer-types",
+        "datetime",
+        "http-methods",
+        "web-dom",
+        "web-file",
         "web-html"
       ]
     }

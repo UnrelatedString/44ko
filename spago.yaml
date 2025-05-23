@@ -5,11 +5,17 @@ package:
     - prelude: ">=6.0.2 <7.0.0"
     - aff
     - aff-promise
+    - affjax
+    - affjax-web
+    - arraybuffer
+    - canvas
+    - colors
     - css
     - effect
     - foldable-traversable
     - halogen
     - halogen-css
+    - transformers
     - unsafe-coerce
     - web-file
     - web-html

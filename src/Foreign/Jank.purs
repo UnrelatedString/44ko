@@ -1,48 +1,75 @@
 module Foreign.Jank
-  ( OffscreenCanvas
-  , createOffscreenCanvas
-  , drawImage
+  ( OffscreenBitmap
+  , Rect
+  , blobToOffscreen
+  , getDimensions
   , ImageBitmap
   , crop
+  , probe
   ) where
 
 import Prelude
 
+import Control.Monad.Error.Class (try)
+import Control.Promise (Promise, toAffE)
+import Data.Either (Either)
+import Data.Traversable (traverse)
 import Effect (Effect)
 import Effect.Aff (Aff)
+import Effect.Class (liftEffect)
+import Effect.Exception (Error)
 import Effect.Uncurried as E
-import Control.Promise (Promise, toAffE)
-import Web.HTML (HTMLImageElement)
+import Graphics.Canvas (getCanvasDimensions, ImageData)
+import Unsafe.Coerce (unsafeCoerce)
+import Web.File.Blob (Blob)
 
-foreign import data OffscreenCanvas :: Type
+foreign import data OffscreenBitmap :: Type
 
 foreign import data ImageBitmap :: Type
 
-foreign import createOffscreenCanvasImpl
-  :: E.EffectFn1
-    { width :: Int, height :: Int }
-    OffscreenCanvas
+type Rect = { x :: Int, y :: Int, width :: Int, height :: Int }
 
-createOffscreenCanvas :: { width :: Int, height :: Int } -> Effect OffscreenCanvas
-createOffscreenCanvas = E.runEffectFn1 createOffscreenCanvasImpl
+-- I don't think I have to worry about ownership transfer stuff
+-- since I'm not using workers? I hope not :|
 
-foreign import drawImageImpl
+-- ... also I hope Aff fibers can handle the background computation type stuff
+-- well enough without workers LMAO
+
+foreign import createOffscreenBitmapImpl :: E.EffectFn1 ImageBitmap OffscreenBitmap
+
+createOffscreenBitmap :: ImageBitmap -> Effect OffscreenBitmap
+createOffscreenBitmap = E.runEffectFn1 createOffscreenBitmapImpl
+
+getDimensions :: OffscreenBitmap -> Effect { width :: Int, height :: Int }
+getDimensions = unsafeCoerce getCanvasDimensions -- lmao.
+
+foreign import tryCreateImageBitmap :: E.EffectFn1 Blob (Promise ImageBitmap)
+
+blobToOffscreen :: Blob -> Aff (Either Error OffscreenBitmap)
+blobToOffscreen blob = do
+  result <- try $ toAffE $ E.runEffectFn1 tryCreateImageBitmap blob
+  traverse (liftEffect <<< createOffscreenBitmap) result
+
+foreign import cropImpl
   :: E.EffectFn2
-    OffscreenCanvas
-    HTMLImageElement
-    Unit
-
-drawImage :: OffscreenCanvas -> HTMLImageElement -> Effect Unit
-drawImage = E.runEffectFn2 drawImageImpl
-
-foreign import createImageBitmapImpl
-  :: E.EffectFn2
-    OffscreenCanvas
-    { x :: Int, y :: Int, width :: Int, height :: Int }
+    OffscreenBitmap
+    Rect
     (Promise ImageBitmap)
 
+-- COULD do this with CSS
+-- https://stackoverflow.com/a/26219379
+-- but seems cleaner not to juggle URLs when it's
+-- Bitmap stuff anyways
+
 crop
-  :: OffscreenCanvas
+  :: OffscreenBitmap
   -> { x :: Int, y :: Int, width :: Int, height :: Int }
   -> Aff ImageBitmap
-crop = (<<<) toAffE <<< E.runEffectFn2 createImageBitmapImpl
+crop = (<<<) toAffE <<< E.runEffectFn2 cropImpl
+
+-- because the binding in Graphics.Canvas is just kinda icky lol
+-- (and like kinda would need to be unsafeCoerced to OffscreenCanvas anyways)
+foreign import probeImpl :: E.EffectFn2 OffscreenBitmap Rect ImageData
+
+probe :: OffscreenBitmap -> Rect -> Effect ImageData
+probe = E.runEffectFn2 probeImpl
