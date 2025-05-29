@@ -4,18 +4,28 @@ module Graphics.Slice
 
 import Prelude
 
-import Data.ArrayBuffer.Typed as AB
+import Control.Monad.Error.Class (class MonadThrow, liftMaybe)
+import Data.Array.NonEmpty as NonEmptyArray
+import Data.ArrayBuffer.Typed as ArrayBuffer
 import Effect (Effect)
-import Effect.Aff (Aff)
+import Effect.Aff (class MonadAff)
 import Effect.Class (liftEffect)
 import Graphics.Canvas (ImageData, imageDataBuffer)
+
+import Control.Oopsie (Oopsie(EmptyImage))
 import Graphics.ImageData (probeCol)
 import Foreign.Jank (OffscreenBitmap, crop, getDimensions)
 
-basicSlice :: OffscreenBitmap -> Aff (Array ImageData)
-basicSlice bmp = _ =<< liftEffect do
-  { width } <- getDimensions bmp
-  let half = width / 2
-  -- don't overthink itttttt for this it literally does work to read the rgba channels individually
-  median <- probeCol bmp half
-  black <- AB.foldl min 1 $ imageDataBuffer $ median
+basicSlice
+  :: forall m
+  . MonadAff m
+  => MonadThrow Oopsie m
+  => OffscreenBitmap -> m (Array ImageData)
+basicSlice bmp = do
+  channels <- liftEffect do
+    { width } <- getDimensions bmp
+    let half = width / 2
+    -- don't overthink itttttt for this it literally does work to read the rgba channels individually
+    median <- probeCol bmp half
+    ArrayBuffer.toArray $ imageDataBuffer median
+  channels' <- liftMaybe EmptyImage $ NonEmptyArray.fromArray channels
