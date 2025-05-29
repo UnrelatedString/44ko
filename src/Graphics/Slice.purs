@@ -7,10 +7,13 @@ import Prelude
 import Control.Monad.Error.Class (class MonadThrow, liftMaybe)
 import Data.Array.NonEmpty as NonEmptyArray
 import Data.ArrayBuffer.Typed as ArrayBuffer
+import Data.Semigroup.Foldable (minimum)
+import Data.UInt (toInt)
 import Effect (Effect)
 import Effect.Aff (class MonadAff)
 import Effect.Class (liftEffect)
 import Graphics.Canvas (ImageData, imageDataBuffer)
+import Partial.Unsafe (unsafePartial)
 
 import Control.Oopsie (Oopsie(EmptyImage))
 import Graphics.ImageData (probeCol)
@@ -29,3 +32,8 @@ basicSlice bmp = do
     median <- probeCol bmp half
     ArrayBuffer.toArray $ imageDataBuffer median
   channels' <- liftMaybe EmptyImage $ NonEmptyArray.fromArray channels
+  let dark = minimum channels'
+  -- this feels SUPER jank but uhhhhhhhh yeah whatever compromises have to be made somehow
+  if dark < 100
+  then do
+    

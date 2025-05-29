@@ -17,6 +17,7 @@ package:
     - halogen
     - halogen-css
     - transformers
+    - uint
     - unsafe-coerce
     - web-file
     - web-html
