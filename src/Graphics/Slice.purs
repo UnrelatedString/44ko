@@ -7,7 +7,9 @@ import Prelude
 import Control.Monad.Error.Class (class MonadThrow, liftMaybe)
 import Data.Array.NonEmpty as NonEmptyArray
 import Data.ArrayBuffer.Typed as ArrayBuffer
+import Data.Maybe (Maybe(..))
 import Data.Semigroup.Foldable (minimum)
+import Data.Tuple.Nested ((/\))
 import Data.UInt (toInt)
 import Effect (Effect)
 import Effect.Aff (class MonadAff)
@@ -34,6 +36,6 @@ basicSlice bmp = do
   channels' <- liftMaybe EmptyImage $ NonEmptyArray.fromArray channels
   let dark = minimum channels'
   -- this feels SUPER jank but uhhhhhhhh yeah whatever compromises have to be made somehow
-  if dark < 100
+  bigTop /\ panelsStartAt <- if dark < 100
   then do
     
