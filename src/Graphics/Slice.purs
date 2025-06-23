@@ -66,3 +66,5 @@ basicHeadSlicer = do
     pure []
   else do
     pure []
+
+-- greedyRowSlicer -- wait I can just do this first then make the col slicer detect if it can't split aaaaaaaa but then wait no i do want to col slicer to be like smarter about stuff between rows but i can still like ughhhhhhh yean no just make them co-recur and have like a flag for if it's approaching a fixed point and then i can refine the approach later
