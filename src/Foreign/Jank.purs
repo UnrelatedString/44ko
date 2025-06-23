@@ -1,6 +1,7 @@
 module Foreign.Jank
   ( OffscreenBitmap
   , Rect
+  , midpoint
   , blobToOffscreen
   , getDimensions
   , ImageBitmap
@@ -28,6 +29,12 @@ foreign import data OffscreenBitmap :: Type
 foreign import data ImageBitmap :: Type
 
 type Rect = { x :: Int, y :: Int, width :: Int, height :: Int }
+
+midpoint :: Rect -> { x :: Int, y :: Int }
+midpoint { x, y, width, height } =
+  { x: x + (width / 2)
+  , y: y + (height / 2)
+  }
 
 -- I don't think I have to worry about ownership transfer stuff
 -- since I'm not using workers? I hope not :|

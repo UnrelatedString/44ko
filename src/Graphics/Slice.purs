@@ -22,31 +22,39 @@ import Foreign.Jank
   ( OffscreenBitmap
   , ImageBitmap
   , Rect
+  , midpoint
   , crop
   , getDimensions
   )
+
+type SlicerCtx =
+  { bmp :: OffscreenBitmap
+  , parentSlice :: Rect
+  }
 
 realizeSlices
   :: forall m f
   . MonadAff m
   => Traversable f
-  => ReaderT OffscreenBitmap m (f Rect)
+  => ReaderT SlicerCtx m (f Rect)
   -> OffscreenBitmap
   -> m (f ImageBitmap)
-realizeSlices slices = runReaderT $ slices >>= traverse \slice -> do
-  bmp <- ask
-  liftAff $ crop bmp slice
+realizeSlices slices offscreen = do
+  { width, height } <- liftEffect $ getDimensions offscreen
+  let ctx = { bmp: offscreen, parentSlice: { x: 0, y: 0, width, height } }
+  flip runReaderT ctx $ slices >>= traverse \slice -> do
+    { bmp } <- ask
+    liftAff $ crop bmp slice
 
 basicHeadSlicer
   :: forall m
   . MonadAff m
   => MonadThrow Oopsie m
-  => ReaderT OffscreenBitmap m (Array Rect)
+  => ReaderT SlicerCtx m (Array Rect)
 basicHeadSlicer = do
-  bmp <- ask
+  { bmp, parentSlice } <- ask
   channels <- liftEffect do
-    { width } <- getDimensions bmp
-    let half = width / 2
+    let { x: half } = midpoint parentSlice
     -- don't overthink itttttt for this it literally does work to read the rgba channels individually
     median <- probeCol bmp half
     uints <- ArrayBuffer.toArray (imageDataBuffer median)
