@@ -1,41 +1,60 @@
 module Graphics.Slice 
-  ( basicSlice
+  ( realizeSlices
+  , basicHeadSlicer
   ) where
 
 import Prelude
 
 import Control.Monad.Error.Class (class MonadThrow, liftMaybe)
+import Control.Monad.Reader.Trans (ReaderT, ask, runReaderT)
 import Data.Array.NonEmpty as NonEmptyArray
 import Data.ArrayBuffer.Typed as ArrayBuffer
-import Data.Maybe (Maybe(..))
+import Data.Traversable (class Traversable, traverse)
 import Data.Semigroup.Foldable (minimum)
-import Data.Tuple.Nested ((/\))
-import Data.UInt (toInt)
-import Effect (Effect)
-import Effect.Aff (class MonadAff)
+import Data.UInt as UInt
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
-import Graphics.Canvas (ImageData, imageDataBuffer)
-import Partial.Unsafe (unsafePartial)
+import Graphics.Canvas (imageDataBuffer)
 
 import Control.Oopsie (Oopsie(EmptyImage))
 import Graphics.ImageData (probeCol)
-import Foreign.Jank (OffscreenBitmap, crop, getDimensions)
+import Foreign.Jank
+  ( OffscreenBitmap
+  , ImageBitmap
+  , Rect
+  , crop
+  , getDimensions
+  )
 
-basicSlice
+realizeSlices
+  :: forall m f
+  . MonadAff m
+  => Traversable f
+  => ReaderT OffscreenBitmap m (f Rect)
+  -> OffscreenBitmap
+  -> m (f ImageBitmap)
+realizeSlices slices = runReaderT $ slices >>= traverse \slice -> do
+  bmp <- ask
+  liftAff $ crop bmp slice
+
+basicHeadSlicer
   :: forall m
   . MonadAff m
   => MonadThrow Oopsie m
-  => OffscreenBitmap -> m (Array ImageData)
-basicSlice bmp = do
+  => ReaderT OffscreenBitmap m (Array Rect)
+basicHeadSlicer = do
+  bmp <- ask
   channels <- liftEffect do
     { width } <- getDimensions bmp
     let half = width / 2
     -- don't overthink itttttt for this it literally does work to read the rgba channels individually
     median <- probeCol bmp half
-    ArrayBuffer.toArray $ imageDataBuffer median
+    uints <- ArrayBuffer.toArray (imageDataBuffer median)
+    pure $ UInt.toInt <$> uints
   channels' <- liftMaybe EmptyImage $ NonEmptyArray.fromArray channels
   let dark = minimum channels'
-  -- this feels SUPER jank but uhhhhhhhh yeah whatever compromises have to be made somehow
-  bigTop /\ panelsStartAt <- if dark < 100
-  then do
-    
+  if dark < 100 then do
+    -- just ignore it for nowwwwwww
+    pure []
+  else do
+    pure []

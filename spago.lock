@@ -10,6 +10,7 @@
             "affjax",
             "affjax-web",
             "arraybuffer",
+            "arrays",
             "canvas",
             "colors",
             "css",
@@ -21,6 +22,7 @@
               "prelude": ">=6.0.2 <7.0.0"
             },
             "transformers",
+            "uint",
             "unsafe-coerce",
             "web-file",
             "web-html"

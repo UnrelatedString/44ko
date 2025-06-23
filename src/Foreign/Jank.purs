@@ -63,7 +63,7 @@ foreign import cropImpl
 
 crop
   :: OffscreenBitmap
-  -> { x :: Int, y :: Int, width :: Int, height :: Int }
+  -> Rect
   -> Aff ImageBitmap
 crop = (<<<) toAffE <<< E.runEffectFn2 cropImpl
 
