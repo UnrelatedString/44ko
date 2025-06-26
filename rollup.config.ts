@@ -24,7 +24,7 @@ const config = (args: Record<string, any>): RollupOptions => ({
                 { property: 'og:title', content: '44ko' },
                 { property: 'og:description', content: 'A content-aware manga reader' },
                 { property: 'og:url', content: 'https://44ko.sideros.rocks' },
-                { property: 'og:image', content: 'https://avatars.githubusercontent.com/u/33167175' },
+                { property: 'og:image', content: 'https://44ko.sideros.rocks/logo.png' },
             ],
             attributes: {
                 html: { lang: 'en' },
