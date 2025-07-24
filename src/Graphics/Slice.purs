@@ -46,6 +46,15 @@ realizeSlices slices offscreen = do
     { bmp } <- ask
     liftAff $ crop bmp slice
 
+debugSlices
+  :: forall m f
+  . MonadAff m
+  => Traversable f
+  => ReaderT SlicerCtx m (f Rect)
+  -> OffscreenBitmap
+  -> m ImageBitmap
+debugSlices
+
 basicHeadSlicer
   :: forall m
   . MonadAff m

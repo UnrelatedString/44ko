@@ -80,3 +80,5 @@ foreign import probeImpl :: E.EffectFn2 OffscreenBitmap Rect ImageData
 
 probe :: OffscreenBitmap -> Rect -> Effect ImageData
 probe = E.runEffectFn2 probeImpl
+
+-- i really do not want to expose bullshit this stateful to the rest of my code lol
