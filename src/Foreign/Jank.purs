@@ -85,7 +85,7 @@ probe = E.runEffectFn2 probeImpl
 
 -- i really do not want to expose bullshit this stateful to the rest of my code lol
 outsideRects
-  :: forall f a.
+  :: forall f a
   . Traversable f
   => Cans.Context2D
   -> f Rect
@@ -112,16 +112,20 @@ outsideRects ctx rects op = Cans.withContext ctx do
   op
 
 highlightRects
-  :: forall f.
+  :: forall f
   . Traversable f
   => OffscreenBitmap
   -> f Rect
-  -> Effect ImageBitmap
-highlightRects bmp rects =  >>= \ctx-> outsideRectangles ctx rects do
-  { width, height } <- Cans.getCanvasDimensions
-  -- ...okay there are some very cursed global compositing styles but I'm just going to
-  --
-  -- not
-  -- do that
-  Cans.setFillStyle ctx "#44222266" -- does it support alpha?????????
-  Cans.fillRect ctx { x: 0.0, y: 0.0, width, height }
+  -> Aff ImageBitmap
+highlightRects bmp rects = do
+  ctx <- unsafeCoerce Cans.getContext2D
+  liftEffect $ outsideRects ctx rects do
+    { width, height } <- Cans.getCanvasDimensions ctx
+    -- ...okay there are some very cursed global compositing styles but I'm just going to
+    --
+    -- not
+    -- do that
+    Cans.setFillStyle ctx "#44222266" -- does it support alpha?????????
+    Cans.fillRect ctx { x: 0.0, y: 0.0, width, height }
+  { width, height } <- liftEffect $ getDimensions bmp
+  crop bmp { x: 0, y: 0, width, height }

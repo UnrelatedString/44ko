@@ -25,6 +25,7 @@ import Foreign.Jank
   , midpoint
   , crop
   , getDimensions
+  , highlightRects
   )
 
 type SlicerCtx =
@@ -57,6 +58,7 @@ debugSlices slices offscreen = do
   { width, height } <- liftEffect $ getDimensions offscreen
   let ctx = { bmp: offscreen, parentSlice: { x: 0, y: 0, width, height } }
   rects <- runReaderT slices ctx
+  liftAff $ highlightRects offscreen rects
 
 basicHeadSlicer
   :: forall m
