@@ -9,6 +9,7 @@ import Control.Monad.Error.Class (class MonadThrow, liftMaybe)
 import Control.Monad.Reader.Trans (ReaderT, ask, runReaderT)
 import Data.Array.NonEmpty as NonEmptyArray
 import Data.ArrayBuffer.Typed as ArrayBuffer
+import Data.Foldable (class Foldable)
 import Data.Traversable (class Traversable, traverse)
 import Data.Semigroup.Foldable (minimum)
 import Data.UInt as UInt
@@ -50,7 +51,7 @@ realizeSlices slices offscreen = do
 debugSlices
   :: forall m f
   . MonadAff m
-  => Traversable f
+  => Foldable f
   => ReaderT SlicerCtx m (f Rect)
   -> OffscreenBitmap
   -> m ImageBitmap

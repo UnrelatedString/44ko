@@ -15,7 +15,8 @@ import Prelude
 import Control.Monad.Error.Class (try)
 import Control.Promise (Promise, toAffE)
 import Data.Either (Either)
-import Data.Traversable (class Traversable, traverse, for_)
+import Data.Foldable (class Foldable)
+import Data.Traversable (traverse, for_)
 import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
@@ -83,48 +84,21 @@ foreign import probeImpl :: E.EffectFn2 OffscreenBitmap Rect ImageData
 probe :: OffscreenBitmap -> Rect -> Effect ImageData
 probe = E.runEffectFn2 probeImpl
 
--- i really do not want to expose bullshit this stateful to the rest of my code lol
-outsideRects
-  :: forall f a
-  . Traversable f
-  => Cans.Context2D
-  -> Number -> Number
-  -> f Rect
-  -> (Cans.Context2D -> Effect a)
-  -> Effect a
-outsideRects ctx width height rects op = Cans.withContext ctx do
-  -- Draw a rectangle around the whole canvas... ccw
-  -- or do I actually need to do this if I use evenodd? eh whatever it can't *hurt*
-  Cans.beginPath ctx
-  Cans.moveTo ctx 0.0 0.0
-  Cans.lineTo ctx 0.0 height
-  Cans.lineTo ctx width height
-  Cans.lineTo ctx width 0.0
-  Cans.closePath ctx
-
-  -- Draw the other rectangles clockwise like normal
-  for_ rects $ Cans.rect ctx <<< unsafeCoerce -- i hate this library so much
-
-  -- Set the clipping path?
-  Cans.clip ctx
-
-  -- Do the other thing and return its result
-  op ctx
+foreign import highlightRectsImpl
+  :: E.EffectFn3
+    OffscreenBitmap
+    String
+    (E.EffectFn1 Rect Unit -> Effect Unit)
+    Unit
 
 highlightRects
   :: forall f
-  . Traversable f
+  . Foldable f
   => OffscreenBitmap
   -> f Rect
   -> Aff ImageBitmap
 highlightRects bmp rects = do
-  ctx <- unsafeCoerce Cans.getContext2D
+  -- and yes this is in place i am out of fucks to give
+  liftEffect $ E.runEffectFn3 highlightRectsImpl bmp "#44222266" (for_ rects <<< E.runEffectFn1)
   { width, height } <- liftEffect $ getDimensions bmp
-  (liftEffect :: Effect Unit -> _) $ unsafeCoerce outsideRects ctx width height rects \ctx -> do
-    -- ...okay there are some very cursed global compositing styles but I'm just going to
-    --
-    -- not
-    -- do that
-    Cans.setFillStyle ctx "#44222266" -- does it support alpha?????????
-    unsafeCoerce Cans.fillRect ctx { x: 0.0, y: 0.0, width, height }
   crop bmp { x: 0, y: 0, width, height }
