@@ -94,7 +94,7 @@ outsideRects
 outsideRects ctx rects op = Cans.withContext ctx do
   -- Draw a rectangle around the whole canvas... ccw
   -- or do I actually need to do this if I use evenodd? eh whatever it can't *hurt*
-  { width, height } <- Cans.getCanvasDimensions
+  { width, height } <- Cans.getCanvasDimensions ctx
   Cans.beginPath ctx
   Cans.moveTo ctx 0.0 0.0
   Cans.lineTo ctx 0.0 height
