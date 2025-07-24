@@ -116,7 +116,7 @@ highlightRects
   . Traversable f
   => OffscreenBitmap
   -> f Rect
-  -> Effect OffscreenBitmap
+  -> Effect ImageBitmap
 highlightRects bmp rects =  >>= \ctx-> outsideRectangles ctx rects do
   { width, height } <- Cans.getCanvasDimensions
   -- ...okay there are some very cursed global compositing styles but I'm just going to
