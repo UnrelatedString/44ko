@@ -88,13 +88,13 @@ outsideRects
   :: forall f a
   . Traversable f
   => Cans.Context2D
+  -> Number -> Number
   -> f Rect
   -> (Cans.Context2D -> Effect a)
   -> Effect a
-outsideRects ctx rects op = Cans.withContext ctx do
+outsideRects ctx width height rects op = Cans.withContext ctx do
   -- Draw a rectangle around the whole canvas... ccw
   -- or do I actually need to do this if I use evenodd? eh whatever it can't *hurt*
-  { width, height } <- Cans.getCanvasDimensions ctx
   Cans.beginPath ctx
   Cans.moveTo ctx 0.0 0.0
   Cans.lineTo ctx 0.0 height
@@ -109,7 +109,7 @@ outsideRects ctx rects op = Cans.withContext ctx do
   Cans.clip ctx
 
   -- Do the other thing and return its result
-  op
+  op ctx
 
 highlightRects
   :: forall f
@@ -119,13 +119,12 @@ highlightRects
   -> Aff ImageBitmap
 highlightRects bmp rects = do
   ctx <- unsafeCoerce Cans.getContext2D
-  liftEffect $ outsideRects ctx rects do
-    { width, height } <- Cans.getCanvasDimensions ctx
+  { width, height } <- liftEffect $ getDimensions bmp
+  (liftEffect :: Effect Unit -> _) $ unsafeCoerce outsideRects ctx width height rects \ctx -> do
     -- ...okay there are some very cursed global compositing styles but I'm just going to
     --
     -- not
     -- do that
     Cans.setFillStyle ctx "#44222266" -- does it support alpha?????????
-    Cans.fillRect ctx { x: 0.0, y: 0.0, width, height }
-  { width, height } <- liftEffect $ getDimensions bmp
+    unsafeCoerce Cans.fillRect ctx { x: 0.0, y: 0.0, width, height }
   crop bmp { x: 0, y: 0, width, height }
