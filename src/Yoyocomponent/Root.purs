@@ -2,7 +2,15 @@ module Yoyocomponent.Root (root) where
 
 import Prelude
 
-import Effect.Class (class MonadEffect)
+-- TODO: separate out the logic that actually gets and processes images
+import Affjax.Web as AX
+import Affjax.ResponseFormat (blob)
+import Data.Bifunctor (bimap)
+import Data.Traversable (traverse)
+import Foreign.Jank (blobToOffscreen)
+import Effect.Exception (error)
+
+import Effect.Aff.Class (class MonadAff)
 import DOM.HTML.Indexed.InputType as InputType
 import Halogen as H
 import Halogen.HTML as HTML
@@ -17,7 +25,7 @@ type State =
 
 root
   :: forall query input output m.
-  MonadEffect m =>
+  MonadAff m =>
   H.Component query input output m
 root = H.mkComponent
   { initialState
@@ -46,5 +54,10 @@ render _ = HTML.div_
   ]
 
 
-handleAction :: forall output m. MonadEffect m => Action -> H.HalogenM State Action () output m Unit
-handleAction (UrlInput url) = H.modify_ _{inputUrl = url}
+handleAction :: forall output m. MonadAff m => Action -> H.HalogenM State Action () output m Unit
+handleAction (UrlInput url) = do
+  response <- H.liftAff $ AX.get blob url 
+  offscreen <- traverse
+    (H.liftAff <<< blobToOffscreen)
+    $ bimap (error <<< AX.printError) _.body response
+  pure unit
