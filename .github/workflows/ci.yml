@@ -14,7 +14,7 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - name: Set up Purescript and Spago
-        run: npm i -g purescript spago@next
+        run: npm i -g purescript spago
       - name: Install Node dependencies
         run: npm ci
       - name: Install Spago dependencies
