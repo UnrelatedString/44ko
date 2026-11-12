@@ -1,5 +1,8 @@
 module Yoyocomponent.Root (root) where
 
+import Prelude
+
+import Effect.Class (class MonadEffect)
 import DOM.HTML.Indexed.InputType as InputType
 import Halogen as H
 import Halogen.HTML as HTML
@@ -14,11 +17,12 @@ type State =
 
 root
   :: forall query input output m.
+  MonadEffect m =>
   H.Component query input output m
 root = H.mkComponent
   { initialState
   , render
-  , eval: H.mkEval H.defaultEval
+  , eval: H.mkEval H.defaultEval { handleAction = handleAction }
   }
 
 initialState :: forall a. a -> State
@@ -40,3 +44,7 @@ render _ = HTML.div_
     , HTML.text ", where bug reports and suggestions are also always welcome."
     ]
   ]
+
+
+handleAction :: forall output m. MonadEffect m => Action -> H.HalogenM State Action () output m Unit
+handleAction (UrlInput url) = H.modify_ _{inputUrl = url}

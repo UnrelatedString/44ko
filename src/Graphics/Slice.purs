@@ -1,16 +1,21 @@
 module Graphics.Slice 
   ( realizeSlices
   , basicHeadSlicer
+  , hardcodedSlicer
+  , hardcodedSlicer'
   ) where
 
 import Prelude
 
 import Control.Monad.Error.Class (class MonadThrow, liftMaybe)
 import Control.Monad.Reader.Trans (ReaderT, ask, runReaderT)
+import Data.Array as Array
 import Data.Array.NonEmpty as NonEmptyArray
 import Data.ArrayBuffer.Typed as ArrayBuffer
 import Data.Foldable (class Foldable)
+import Data.Ord (abs)
 import Data.Traversable (class Traversable, traverse)
+import Data.Tuple (Tuple(Tuple))
 import Data.Semigroup.Foldable (minimum)
 import Data.UInt as UInt
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -84,7 +89,17 @@ basicHeadSlicer = do
 
 type HardcodedLayout = Array Rect
 
+utterBareMinimum = boundsToRect <$> neighbors [1350, 675, 0] <*> neighbors [0, 550, 979, 1410, 1938]
+  where neighbors = Array.zip <*> Array.drop 1
+        boundsToRect (Tuple x1 x2) (Tuple y1 y2) =
+          { x: min x1 x2
+          , y: min y1 y2
+          , width: abs $ x1 - x2
+          , height: abs $ y1 - y2
+          }
+
 -- just ignores parentSlice entirely since 1. it's not recursive and 2. improvements also probably won't be recursive
+-- ...it. still should be recursive. but hardcode . just naively all eight for proof of concept please
 hardcodedSlicer
   :: forall m
   . MonadAff m
@@ -92,5 +107,6 @@ hardcodedSlicer
   => HardcodedLayout
   -> ReaderT SlicerCtx m (Array Rect)
 hardcodedSlicer rects = do
-  { bmp } <- ask
-  pure []
+  pure rects
+
+hardcodedSlicer' = hardcodedSlicer utterBareMinimum
