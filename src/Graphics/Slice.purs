@@ -82,18 +82,7 @@ basicHeadSlicer = do
   else do
     pure []
 
--- greedyRowSlicer -- wait I can just do this first then make the col slicer detect if it can't split aaaaaaaa but then wait no i do want to col slicer to be like smarter about stuff between rows but i can still like ughhhhhhh yean no just make them co-recur and have like a flag for if it's approaching a fixed point and then i can refine the approach later
-
-type HardcodedLayout =
-  { one :: Rect
-  , two :: Rect
-  , three :: Rect
-  , four :: Rect
-  , five :: Rect
-  , six :: Rect
-  , seven :: Rect
-  , eight :: Rect
-  }
+type HardcodedLayout = Array Rect
 
 -- just ignores parentSlice entirely since 1. it's not recursive and 2. improvements also probably won't be recursive
 hardcodedSlicer
@@ -102,5 +91,6 @@ hardcodedSlicer
   => MonadThrow Oopsie m
   => HardcodedLayout
   -> ReaderT SlicerCtx m (Array Rect)
-hardcodedSlicer { one, two, three, four, five, six, seven, eight } = do
+hardcodedSlicer rects = do
   { bmp } <- ask
+  pure []
