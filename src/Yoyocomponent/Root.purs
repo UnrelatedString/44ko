@@ -6,9 +6,10 @@ import Prelude
 import Affjax.Web as AX
 import Affjax.ResponseFormat (blob)
 import Data.Bifunctor (bimap)
+import Data.Either (either)
 import Data.Traversable (traverse)
 import Foreign.Jank (blobToOffscreen)
-import Effect.Exception (error)
+import Effect.Exception (error, throwException)
 
 import Effect.Aff.Class (class MonadAff)
 import DOM.HTML.Indexed.InputType as InputType
@@ -60,4 +61,4 @@ handleAction (UrlInput url) = do
   offscreen <- traverse
     (H.liftAff <<< blobToOffscreen)
     $ bimap (error <<< AX.printError) _.body response
-  pure unit
+  H.liftEffect $ either throwException (const $ pure unit) offscreen
